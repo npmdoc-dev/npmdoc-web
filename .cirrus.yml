@@ -1,0 +1,11 @@
+
+publish_task:
+  only_if: $CIRRUS_BRANCH == 'master'
+  container:
+    image: google/cloud-sdk:latest
+  environment:
+    KEYFILE_SECRET: ENCRYPTED[da5eaa46c4480cc1012e7ea40a6b24dba33a415bfc37b1c1598a8ab9f881c8c331c654b2d1129f4d6f43be78a6f75bc5]
+  script:
+    - openssl enc -aes-256-cbc -d -in key.json.enc -out key.json -k $KEYFILE_SECRET
+    - gcloud auth activate-service-account --key-file=key.json
+    - gsutil cp content/* gs://npmdoc
